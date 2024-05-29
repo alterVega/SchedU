@@ -12,6 +12,22 @@ https://youtu.be/6agKeX77MMk
 
 
 
+## Core features ⚙️
+
+### Work-time tracker
+Track and record amount of time spent on different categories of tasks, glean statistics such as average time spent 
+
+### Weekly workload projector
+Crafted from insights from historical work-time data, receive estimates on projected workload for the week
+
+### Automatic smart re-scheduler
+Receive instant recommendations to efficiently reschedule events if need be in the most convenient timeslot
+
+### Designer tools 
+Design and customize your timetable interface in whatever way you look with custom design elements 
+
+
+
 ## Get started 🔨
 
 1. Install dependencies
