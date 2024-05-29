@@ -6,7 +6,7 @@ SchedU is a revolutionary Timetable scheduling app which leverages **data analyt
 
 
 
-## Take a look at our video as a quick introduction
+## A quick introductory video
 
 https://youtu.be/6agKeX77MMk
 
