@@ -8,7 +8,7 @@ SchedU is a revolutionary Timetable scheduling app which leverages **data analyt
 
 ## Take a look at our video as a quick introduction
 
-
+https://youtu.be/6agKeX77MMk
 
 
 
