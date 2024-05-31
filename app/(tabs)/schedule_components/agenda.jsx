@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { Agenda } from "react-native-calendars";
 import { Card, Avatar } from "react-native-paper";
-import { ThemedText } from "@/components/ThemedText";
 
 const timeToString = (time) => {
   const date = new Date(time);
@@ -12,6 +11,7 @@ const timeToString = (time) => {
 export function AgendaPortion() {
   const [items, setItems] = useState({});
 
+  //slow to load
   const loadItems = (day) => {
     setTimeout(() => {
       for (let i = -15; i < 85; i++) {
@@ -19,7 +19,7 @@ export function AgendaPortion() {
         const strTime = timeToString(time);
         if (!items[strTime]) {
           items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 3 + 1);
+          const numItems = 1;
           for (let j = 0; j < numItems; j++) {
             items[strTime].push({
               name: "Item for " + strTime + " #" + j,
@@ -48,7 +48,7 @@ export function AgendaPortion() {
                 alignItems: "center",
               }}
             >
-              <ThemedText>{item.name}</ThemedText>
+              <Text style={styles.text}>{item.name}</Text>
               <Avatar.Text label="J" />
             </View>
           </Card.Content>
@@ -57,13 +57,29 @@ export function AgendaPortion() {
     );
   };
 
+  const renderEmptyDate = () => {
+    return (
+      <View style={styles.emptyDate}>
+        <Text>This is empty date!</Text>
+      </View>
+    );
+  };
+
+  const rowHasChanged = (r1, r2) => {
+    return r1.name !== r2.name;
+  };
+
   return (
     <View style={styles.container}>
       <Agenda
         items={items}
         loadItemsForMonth={loadItems}
-        selected={"2017-01-01"}
+        selected={new Date()}
         renderItem={renderItem}
+        renderEmptyDate={this.renderEmptyDate}
+        rowHasChanged={this.rowHasChanged}
+        showClosingKnob={true}
+        onDayPress={(day) => console.log(day)}
       />
     </View>
   );
@@ -73,5 +89,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 20,
+  },
+  text: {
+    textAlign: "center",
+    fontSize: 20,
   },
 });
