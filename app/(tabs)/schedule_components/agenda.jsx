@@ -8,7 +8,7 @@ const timeToString = (time) => {
   return date.toISOString().split("T")[0];
 };
 
-export function AgendaPortion() {
+export const AgendaPortion = ({route}) => {
   const [items, setItems] = useState({});
 
   //slow to load
@@ -69,12 +69,14 @@ export function AgendaPortion() {
     return r1.name !== r2.name;
   };
 
+  const selectedDayDate = route.params.selectedDay
+
   return (
     <View style={styles.container}>
       <Agenda
         items={items}
         loadItemsForMonth={loadItems}
-        selected={new Date()}
+        selected={selectedDayDate.dateString}
         renderItem={renderItem}
         renderEmptyDate={this.renderEmptyDate}
         rowHasChanged={this.rowHasChanged}
