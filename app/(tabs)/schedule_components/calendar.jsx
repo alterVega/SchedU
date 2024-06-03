@@ -6,14 +6,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 export const CalendarPortion = ({navigation}) => {
-  const [selected, setSelected] = useState('');
-  const currentDate = '2024-01-01';
-
-  const getDate = (count) => {
-    const date = new Date(currentDate);
-    const newDate = date.setDate(date.getDate() + count);
-    return CalendarUtils.getCalendarDateString(newDate);
-  }
+  const [selected, setSelected] = useState('');;
 
   return (
     <Calendar
@@ -26,7 +19,7 @@ export const CalendarPortion = ({navigation}) => {
       onDayPress={day => {
         console.log('selected day', day);
         setSelected(day.dateString);
-        navigation.navigate("Agenda")
+        navigation.navigate("Agenda", {selectedDay: day})
       }}
       // Mark specific dates as marked
       markedDates={{
