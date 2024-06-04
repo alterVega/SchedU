@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { Agenda } from "react-native-calendars";
 import { Card, Avatar } from "react-native-paper";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 
 const timeToString = (time) => {
   const date = new Date(time);
   return date.toISOString().split("T")[0];
 };
 
-export const AgendaPortion = ({route}) => {
+export const AgendaPortion = ({route, navigation}) => {
   const [items, setItems] = useState({});
 
   //slow to load
@@ -38,7 +40,7 @@ export const AgendaPortion = ({route}) => {
 
   const renderItem = (item) => {
     return (
-      <TouchableOpacity style={{ marginRight: 10, marginTop: 17 }}>
+      <TouchableOpacity activeOpacity={0.7} style={{ marginRight: 10, marginTop: 17 }}>
         <Card>
           <Card.Content>
             <View
@@ -81,7 +83,8 @@ export const AgendaPortion = ({route}) => {
         renderEmptyDate={this.renderEmptyDate}
         rowHasChanged={this.rowHasChanged}
         showClosingKnob={true}
-        onDayPress={(day) => console.log(day)}
+        onDayPress={(day) => 
+        navigation.navigate("EventCreation", {selectedDay: day})}
       />
     </View>
   );
@@ -94,6 +97,6 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: "center",
-    fontSize: 20,
+    fontSize: 15,
   },
 });
