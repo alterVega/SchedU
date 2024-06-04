@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useCallback, useMemo, useRef } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Button } from "react-native";
 import { Calendar, CalendarUtils } from "react-native-calendars";
 import { StatsPortion } from "./stats";
 import {NavigationContainer} from '@react-navigation/native';
@@ -9,6 +9,12 @@ export const CalendarPortion = ({navigation}) => {
   const [selected, setSelected] = useState('');;
 
   return (
+    <View>
+    <Button
+      onPress={event => {navigation.navigate("EventCreation", {selectedDay: event})}}
+      title="Create event"
+      color="#841584"
+/>
     <Calendar
       style={{
         borderWidth: 1,
@@ -26,5 +32,7 @@ export const CalendarPortion = ({navigation}) => {
         [selected] : {selected: true, marked: true, selectedColor: 'red'}
       }}
     />
+    </View>
   );
 };
+
