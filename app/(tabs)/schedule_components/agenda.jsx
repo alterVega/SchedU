@@ -10,7 +10,7 @@ const timeToString = (time) => {
   return date.toISOString().split("T")[0];
 };
 
-export const AgendaPortion = ({route, navigation}) => {
+export const AgendaPortion = ({route}) => {
   const [items, setItems] = useState({});
 
   //slow to load
@@ -83,8 +83,7 @@ export const AgendaPortion = ({route, navigation}) => {
         renderEmptyDate={this.renderEmptyDate}
         rowHasChanged={this.rowHasChanged}
         showClosingKnob={true}
-        onDayPress={(day) => 
-        navigation.navigate("EventCreation", {selectedDay: day})}
+        onDayPress={(day) => console.log(day)}
       />
     </View>
   );
@@ -100,3 +99,4 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 });
+
