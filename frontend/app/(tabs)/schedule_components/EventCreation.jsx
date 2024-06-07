@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   TextInput,
   Button,
+  ScrollView,
 } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -56,24 +57,23 @@ export const EventCreation = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.screen}>
-    <View style={styles.container2}>
+    <ScrollView>
     <View style={styles.container}>
-    <ThemedText type="subtitle" style={styles.title}>Title of event</ThemedText>
+    <ThemedText type="subtitle" style={styles.title}>Event</ThemedText>
       <TextInput
         style={styles.titleInput}
         onChangeText={onChangeText}
         value={text}
       />
     </View>
-    <View style={styles.container}>
+    <View style={styles.container2}>
     <ThemedText type="subtitle" style={styles.title}>Description</ThemedText>
       <TextInput
-        style={styles.titleInput}
+        style={styles.titleInputDesc}
         onChangeText={onChangeText2}
         value={text2}
+        multiline={true}
       />
-    </View>
     </View>
     <View>
       <Button onPress={showDatepicker} title="Select date" />
@@ -102,9 +102,17 @@ export const EventCreation = ({ navigation }) => {
         />
       )}
     </View>
-    <Text>selected: {date.toLocaleString()}</Text>
+    <View style={[{ width: "90%", margin: 10}]}>
+    <Button
+      onPress={event => {navigation.navigate("Agenda", {selectedDay: event})}}
+      title="Create event"
+      color="#841584"
+      style={styles.create}
+    />
+    <Text>selected: {date.toLocaleString()}</Text> 
     <Text>selected: {date2.toLocaleString()}</Text>
     </View>
+    </ScrollView>
   );
 };
 
@@ -113,15 +121,24 @@ const styles = StyleSheet.create({
     gap: 30
   },
   container: {
+    flex: 2,
     marginTop: 20,
     flexDirection: "row",
   },
   container2: {
-    gap: 2,
+    padding: 10
   },
   titleInput: {
-    flex: 1,
+    flex: 3,
     height: 40,
+    margin: 25,
+    borderWidth: 1,
+    padding: 10,
+    flexDirection: "row"
+  },
+  titleInputDesc: {
+    flex: 3,
+    height: 100,
     margin: 25,
     borderWidth: 1,
     padding: 10,
@@ -129,10 +146,10 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    height: 40,
-    margin: 25,
-    padding: 10,
-    flexDirection: "row"
+    padding: 5,
+    flexDirection: "row",
+    fontSize: 20,
+    alignSelf: "center"
   },
   selectTimeButton: {
     flex: 1,
@@ -142,6 +159,5 @@ const styles = StyleSheet.create({
   },
   selectTime: {
     alignSelf: "center"
-  }
-
+  },
 });
