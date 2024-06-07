@@ -16,6 +16,7 @@ export const EventCreation = ({ navigation }) => {
   const [date, setDate] = useState(new Date(1598051730000));
   const [date2, setDate2] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
+  const [mode2, setMode2] = useState('date');
   const [show, setShow] = useState(false);
   const [show2, setShow2] = useState(false);
   const [text, onChangeText] = React.useState('');
@@ -41,7 +42,7 @@ export const EventCreation = ({ navigation }) => {
 
   const showMode2 = (currentMode) => {
     setShow2(true);
-    setMode(currentMode);
+    setMode2(currentMode);
   };
   
   const showDatepicker = () => {
@@ -59,7 +60,7 @@ export const EventCreation = ({ navigation }) => {
   return (
     <ScrollView>
     <View style={styles.container}>
-    <ThemedText type="subtitle" style={styles.title}>Event</ThemedText>
+    <ThemedText type="subtitle" style={styles.Eventtitle}>Event</ThemedText>
       <TextInput
         style={styles.titleInput}
         onChangeText={onChangeText}
@@ -89,28 +90,26 @@ export const EventCreation = ({ navigation }) => {
         />
       )}
     </View>
-    <View>
+    <View style={styles.endTime}>
     <Button onPress={showTimepicker2} title="Select end-time" />
       {show2 && (
         <DateTimePicker
           testID="dateTimePicker2"
           value={date2}
-          mode={mode}
+          mode={mode2}
           is24Hour={true}
           onChange={onChange2}
           style={styles.selectTime}
         />
       )}
     </View>
-    <View style={[{ width: "90%", margin: 10}]}>
+    <View style={styles.createEvent}>
     <Button
-      onPress={event => {navigation.navigate("Agenda", {selectedDay: event})}}
+      onPress={event => {navigation.navigate("Agenda", {selectedDate: date, selectedEndTime: date2 })}}
       title="Create event"
       color="#841584"
       style={styles.create}
     />
-    <Text>selected: {date.toLocaleString()}</Text> 
-    <Text>selected: {date2.toLocaleString()}</Text>
     </View>
     </ScrollView>
   );
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   container2: {
-    padding: 10
+    marginTop: 40
   },
   titleInput: {
     flex: 3,
@@ -146,10 +145,16 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    padding: 5,
     flexDirection: "row",
     fontSize: 20,
     alignSelf: "center"
+  },
+  Eventtitle: {
+    flex: 1,
+    flexDirection: "row",
+    fontSize: 20,
+    marginLeft: 20,
+    marginTop: 30
   },
   selectTimeButton: {
     flex: 1,
@@ -160,4 +165,12 @@ const styles = StyleSheet.create({
   selectTime: {
     alignSelf: "center"
   },
+  endTime: {
+    marginTop: 40
+  },
+  createEvent: {
+    marginTop: 40,
+    alignSelf: 'center',
+    borderWidth: 2
+  }
 });
