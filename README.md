@@ -28,9 +28,15 @@ Design and customize your timetable interface in whatever way you look with cust
 
 
 
-## Get started 🔨
+## Installation 🔨
 
-1. Install dependencies
+1. Clone the repository
+
+   ```bash
+   git clone https://github.com/alterVega/SchedU.git
+   ```
+
+3. Install dependencies
 
    ```bash
    npm install
