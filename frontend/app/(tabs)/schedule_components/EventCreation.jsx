@@ -105,7 +105,8 @@ export const EventCreation = ({ navigation }) => {
     </View>
     <View style={styles.createEvent}>
     <Button
-      onPress={event => {navigation.navigate("Agenda", {selectedDate: date, selectedEndTime: date2 })}}
+      onPress={event => {navigation.navigate("Agenda", {selectedDate: date, selectedEndTime: date2, 
+          title: text, desc: text2})}}
       title="Create event"
       color="#841584"
       style={styles.create}
