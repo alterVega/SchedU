@@ -54,6 +54,8 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 Database: MySQL
 
+Frontend: React Native
+
 
 
 In the output, you'll find options to open the app in a
