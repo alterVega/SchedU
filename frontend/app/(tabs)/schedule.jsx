@@ -1,36 +1,46 @@
-import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import React, { Suspense } from "react";
+import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { AgendaPortion } from "./schedule_components/agenda";
 import { CalendarPortion } from "./schedule_components/calendar";
 import { EventCreation } from "./schedule_components/EventCreation";
-import { StatsPortion } from "./schedule_components/stats";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Agenda, Calendar } from "react-native-calendars";
+import { SQLiteProvider } from "expo-sqlite";
 
 const Stack = createNativeStackNavigator();
 
 export default function ScheduleScreen() {
   return (
-    <NavigationContainer independent={true}>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Calendar"
-          component={CalendarPortion}
-          options={{ title: "Your calendar" }}
-        />
-        <Stack.Screen
-          name="Agenda"
-          component={AgendaPortion}
-          options={{ title: "Your Agenda" }}
-        />
-        <Stack.Screen
-          name="EventCreation"
-          component={EventCreation}
-          options={{ title: "Create an Event" }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Suspense
+      fallback={
+        <View style={{ flex: 1 }}>
+          <ActivityIndicator size={"large"} />
+          <Text>Loading Database...</Text>
+        </View>
+      }
+    >
+      <SQLiteProvider databaseName="allEventsDB.db" useSuspense={true}>
+        <NavigationContainer independent={true}>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Calendar"
+              component={CalendarPortion}
+              options={{ title: "Your calendar" }}
+            />
+            <Stack.Screen
+              name="Agenda"
+              component={AgendaPortion}
+              options={{ title: "Your Agenda" }}
+            />
+            <Stack.Screen
+              name="EventCreation"
+              component={EventCreation}
+              options={{ title: "Create an Event" }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SQLiteProvider>
+    </Suspense>
   );
 }
 
