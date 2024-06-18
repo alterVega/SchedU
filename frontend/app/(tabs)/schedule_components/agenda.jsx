@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { Agenda } from "react-native-calendars";
 import { Card, Avatar } from "react-native-paper";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { useSQLiteContext } from "expo-sqlite/next";
 
 const timeToString = (time) => {
   const date = new Date(time);
@@ -12,30 +11,33 @@ const timeToString = (time) => {
 
 export const AgendaPortion = ({ route }) => {
   const [items, setItems] = useState({});
+  const db = useSQLiteContext();
 
-  //slow to load
-  const loadItems = (day) => {
-    setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
-        if (!items[strTime]) {
-          items[strTime] = [];
-          const numItems = 1;
-          for (let j = 0; j < numItems; j++) {
-            items[strTime].push({
-              name: "Item for " + strTime + " #" + j,
-              height: Math.max(50, Math.floor(Math.random() * 150)),
-            });
-          }
-        }
+  async function getData() {
+    const result = await db.getAllAsync(`SELECT * FROM Events`);
+    return result;
+  }
+
+  async function reformatDbToDict() {
+    const output = {};
+    const dbList = await getData();
+    for (let i = 0; i < dbList.length; i++) {
+      const strDate = timeToString(dbList[i].startTime);
+      if (!output[strDate]) {
+        output[strDate] = [{ name: dbList[i].title, height: 50 }];
+      } else {
+        output[strDate].push({ name: dbList[i].title, height: 50 });
       }
-      const newItems = {};
-      Object.keys(items).forEach((key) => {
-        newItems[key] = items[key];
-      });
-      setItems(newItems);
-    }, 1000);
+    }
+    return output;
+  }
+
+  useEffect(() => {
+    loadItems();
+  }, [db]);
+
+  const loadItems = () => {
+    reformatDbToDict().then((x) => setItems(x));
   };
 
   const renderItem = (item) => {
@@ -86,7 +88,6 @@ export const AgendaPortion = ({ route }) => {
         renderEmptyDate={this.renderEmptyDate}
         rowHasChanged={this.rowHasChanged}
         showClosingKnob={true}
-        onDayPress={(day) => console.log(day)}
       />
     </View>
   );
