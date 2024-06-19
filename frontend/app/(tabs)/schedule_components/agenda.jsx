@@ -18,18 +18,44 @@ export const AgendaPortion = ({ route }) => {
     return result;
   }
 
+  //reformat data structure to cater to Agenda in react-native-calendars using dictionaries in a specified format
   async function reformatDbToDict() {
     const output = {};
     const dbList = await getData();
     for (let i = 0; i < dbList.length; i++) {
       const strDate = timeToString(dbList[i].startTime);
       if (!output[strDate]) {
-        output[strDate] = [{ name: dbList[i].title, height: 50 }];
+        output[strDate] = [
+          {
+            id: dbList[i].id,
+            startTime: dbList[i].startTime,
+            endTime: dbList[i].endTime,
+            name: dbList[i].title,
+            desc: dbList[i].description,
+            height: 50,
+          },
+        ];
       } else {
-        output[strDate].push({ name: dbList[i].title, height: 50 });
+        output[strDate].push({
+          id: dbList[i].id,
+          startTime: dbList[i].startTime,
+          endTime: dbList[i].endTime,
+          name: dbList[i].title,
+          desc: dbList[i].description,
+          height: 50,
+        });
       }
     }
     return output;
+  }
+
+  //handles event deletion on Agenda Page
+  //currently requires you to go back to calendar page then re-enter Agenda Page to see event is removed after long press. need to fix
+  async function deleteEvent(id) {
+    db.withTransactionAsync(async () => {
+      await db.runAsync(`DELETE FROM Events WHERE id = ?;`, [id]);
+      await getData();
+    });
   }
 
   useEffect(() => {
@@ -45,6 +71,7 @@ export const AgendaPortion = ({ route }) => {
       <TouchableOpacity
         activeOpacity={0.7}
         style={{ marginRight: 10, marginTop: 17 }}
+        onLongPress={() => deleteEvent(item.id)}
       >
         <Card>
           <Card.Content>
@@ -64,18 +91,6 @@ export const AgendaPortion = ({ route }) => {
     );
   };
 
-  const renderEmptyDate = () => {
-    return (
-      <View style={styles.emptyDate}>
-        <Text>This is empty date!</Text>
-      </View>
-    );
-  };
-
-  const rowHasChanged = (r1, r2) => {
-    return r1.name !== r2.name;
-  };
-
   const selectedDayDate = route.params.selectedDay;
 
   return (
@@ -85,8 +100,6 @@ export const AgendaPortion = ({ route }) => {
         loadItemsForMonth={loadItems}
         selected={selectedDayDate.dateString}
         renderItem={renderItem}
-        renderEmptyDate={this.renderEmptyDate}
-        rowHasChanged={this.rowHasChanged}
         showClosingKnob={true}
       />
     </View>
