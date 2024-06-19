@@ -14,6 +14,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import * as SQLite from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
 import { Asset } from "expo-asset";
+import { StatusBar } from "expo-status-bar";
 
 const loadDatabase = async () => {
   const dbName = "allEventsDB.db";
@@ -33,51 +34,26 @@ const loadDatabase = async () => {
 };
 
 export const EventCreation = ({ navigation }) => {
-  const [date, setDate] = useState(new Date(1598051730000));
-  const [date2, setDate2] = useState(new Date(1598051730000));
-  const [mode, setMode] = useState("date");
-  const [mode2, setMode2] = useState("date");
-  const [show, setShow] = useState(false);
-  const [show2, setShow2] = useState(false);
   const [text, onChangeText] = React.useState("");
   const [text2, onChangeText2] = React.useState("");
+
+  //State for the date picker
+  const [date, setDate] = useState(new Date());
+
+  //State for the Start Time
+  const [startTime, setStartTime] = useState(new Date());
+
+  //State for End Time
+  const [endTime, setEndTime] = useState(new Date());
+
+  //State for database
   const db = SQLite.useSQLiteContext();
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setShow(false);
-    setDate(currentDate);
-  };
-
-  const onChange2 = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setShow2(false);
-    setDate2(currentDate);
-  };
-
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showMode2 = (currentMode) => {
-    setShow2(true);
-    setMode2(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
-  const showTimepicker = () => {
-    showMode("time");
-  };
-
-  const showTimepicker2 = () => {
-    showMode2("time");
-  };
-
   const [dbLoaded, setDbLoaded] = useState(false);
+
+  const onChangeDate = (event, selectedDate) => {
+    setDate(selectedDate);
+    setShowDate(false);
+  };
 
   useEffect(() => {
     loadDatabase()
@@ -94,11 +70,52 @@ export const EventCreation = ({ navigation }) => {
     return result;
   }
 
+  //handles adding events into the database
   async function addEvent() {
+    //input date
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+
+    //startTime
+    const startHours = startTime.getHours();
+    const startMinutes = startTime.getMinutes();
+    const startSeconds = startTime.getSeconds();
+    const startMilliseconds = startTime.getMilliseconds();
+
+    //startTime
+    const endHours = endTime.getHours();
+    const endMinutes = endTime.getMinutes();
+    const endSeconds = endTime.getSeconds();
+    const endMilliseconds = endTime.getMilliseconds();
+
+    //Correcting the data before sending into database
+    const correctedStartTime = new Date(
+      Date.UTC(
+        year,
+        month,
+        day,
+        startHours,
+        startMinutes,
+        startSeconds,
+        startMilliseconds
+      )
+    );
+    const correctedEndTime = new Date(
+      Date.UTC(
+        year,
+        month,
+        day,
+        endHours,
+        endMinutes,
+        endSeconds,
+        endMilliseconds
+      )
+    );
     db.withTransactionAsync(async () => {
       await db.runAsync(
         `INSERT INTO Events (startTime, endTime, title, description) VALUES (?, ?, ?, ?);`,
-        [date.getMilliseconds(), date2.getMilliseconds(), text, text2]
+        [correctedStartTime.getTime(), correctedEndTime.getTime(), text, text2]
       );
       await getData();
     });
@@ -107,16 +124,18 @@ export const EventCreation = ({ navigation }) => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <ThemedText type="subtitle" style={styles.Eventtitle}>
+        <ThemedText type="subtitle" style={styles.title}>
           Event
         </ThemedText>
         <TextInput
           style={styles.titleInput}
           onChangeText={onChangeText}
           value={text}
+          placeholder="Math Class"
+          placeholderTextColor={"grey"}
         />
       </View>
-      <View style={styles.container2}>
+      <View style={styles.container}>
         <ThemedText type="subtitle" style={styles.title}>
           Description
         </ThemedText>
@@ -125,34 +144,41 @@ export const EventCreation = ({ navigation }) => {
           onChangeText={onChangeText2}
           value={text2}
           multiline={true}
+          placeholder="Lorem ipsum dolor sit amet"
+          placeholderTextColor={"grey"}
         />
       </View>
-      <View>
-        <Button onPress={showDatepicker} title="Select date" />
-        <Button onPress={showTimepicker} title="Select start-time" />
-        {show && (
+      <View style={styles.container2}>
+        <View style={styles.dateTime}>
+          <Text style={styles.choose}>Choose Date:</Text>
           <DateTimePicker
-            testID="dateTimePicker"
             value={date}
-            mode={mode}
+            mode={"date"}
             is24Hour={true}
-            onChange={onChange}
-            style={styles.selectTime}
+            onChange={(event, date) => setDate(date)}
+            style={styles.picker}
           />
-        )}
-      </View>
-      <View style={styles.endTime}>
-        <Button onPress={showTimepicker2} title="Select end-time" />
-        {show2 && (
+        </View>
+        <View style={styles.dateTime}>
+          <Text style={styles.choose}>Choose Start Time:</Text>
           <DateTimePicker
-            testID="dateTimePicker2"
-            value={date2}
-            mode={mode2}
+            value={startTime}
+            mode={"time"}
             is24Hour={true}
-            onChange={onChange2}
-            style={styles.selectTime}
+            onChange={(event, time) => setStartTime(time)}
+            style={styles.picker}
           />
-        )}
+        </View>
+        <View style={styles.dateTime}>
+          <Text style={styles.choose}>Choose End Time:</Text>
+          <DateTimePicker
+            value={endTime}
+            mode={"time"}
+            is24Hour={true}
+            onChange={(event, time) => setEndTime(time)}
+            style={styles.picker}
+          />
+        </View>
       </View>
       <View style={styles.createEvent}>
         <Button
@@ -169,16 +195,20 @@ export const EventCreation = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  screen: {
-    gap: 30,
-  },
-  container: {
+  dateTime: {
     flex: 2,
     marginTop: 20,
-    flexDirection: "row",
+    alignContent: "center",
+  },
+  container: {
+    marginTop: 40,
   },
   container2: {
-    marginTop: 40,
+    flexDirection: "row",
+    flex: 1,
+    alignContent: "space-evenly",
+    textAlign: "center",
+    alignItems: "center",
   },
   titleInput: {
     flex: 3,
@@ -199,33 +229,23 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     flexDirection: "row",
-    fontSize: 20,
     alignSelf: "center",
-    color: "black",
-  },
-  Eventtitle: {
-    flex: 1,
-    flexDirection: "row",
     fontSize: 20,
-    marginLeft: 20,
-    marginTop: 30,
     color: "black",
-  },
-  selectTimeButton: {
-    flex: 1,
-    height: 40,
-    margin: 25,
-    padding: 10,
-  },
-  selectTime: {
-    alignSelf: "center",
-  },
-  endTime: {
-    marginTop: 40,
   },
   createEvent: {
     marginTop: 40,
     alignSelf: "center",
     borderWidth: 2,
+  },
+  picker: {
+    flex: 1,
+    alignSelf: "left",
+    marginTop: 5,
+  },
+  choose: {
+    flex: 1,
+    marginLeft: 5,
+    fontSize: 20,
   },
 });
