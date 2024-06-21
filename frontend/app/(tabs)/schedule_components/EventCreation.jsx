@@ -70,7 +70,6 @@ export const EventCreation = ({ navigation }) => {
     return result;
   }
 
-  //handles adding events into the database
   async function addEvent() {
     //input date
     const year = date.getFullYear();
