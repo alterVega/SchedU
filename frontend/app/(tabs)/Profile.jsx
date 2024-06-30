@@ -50,7 +50,7 @@ export default function Profile() {
           </View>
           <TouchableOpacity style={styles.label} onPress= {() => setModalVisible2(true)}>
             <ThemedText type="subtitle" fontSize>
-              Weekly hours
+              Work-time tracker
             </ThemedText>
           </TouchableOpacity>
           <Modal visible={ModalVisible2} animationType='slide' presentationStyle='pageSheet'>
