@@ -6,19 +6,32 @@ import FeatherIcon from "react-native-vector-icons/Feather";
 import Ionicon from "react-native-vector-icons/Ionicons";
 import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import Octicon from "react-native-vector-icons/Octicons";
+import  Entypo from 'react-native-vector-icons/Entypo';
 import { useState } from 'react';
+import { CountdownCircleTimer, countdownCircleTimer } from 'react-native-countdown-circle-timer';
 
-async function getProjector() {
-  const result = await db.getAllAsync(`SELECT DATEDIFF(startTime, endTime) AS duration FROM EVENTS
-    WHERE `);
-  setTransaction(result);
+//Recieve duration for the current task for the timer
+async function getDuration() {
+  const result = await db.getAllAsync<Transaction>(
+    `SELECT TIMESTAMPDIFF(MINUTE, endTime, startTime) AS duration
+    FROM Events
+    WHERE NOW() BETWEEN startTime AND endTime;`)
 }
 
 export default function Profile() {
+  // query to calculate total hours for the current week
   async function getProjector() {
-    const result = await db.getAllAsync(`SElECT * FROM EVENTS`)
+    const result = await db.getAllAsync<Transaction>(
+      `SELECT SUM(TIMESTAMPDIFF(MINUTE, endTime, startTime)) AS duration 
+      FROM Events
+      WHERE DATE(startTime) BETWEEN DATE(TIMESTAMPADD(DAY, -(DAYOFWEEK(NOW())), 
+          NOW())) AND DATE(TIMESTAMPADD(DAY, (7 - DAYOFWEEK(NOW())), NOW()))
+          AND startTime IS NOT NULL;`
+    )
   }
   const [ModalVisible, setModalVisible] = useState(false);
+  const [ModalVisible2, setModalVisible2] = useState(false);
+  const [isCountdownPlaying, setCountdownPlaying] = useState(false);
   return (
     <ImageBackground
       source={require("@/assets/images/noticeboardbg.png")}
@@ -35,11 +48,40 @@ export default function Profile() {
           <View>
             <Ionicon name="hourglass" size={60} color="brown" />
           </View>
-          <View style={styles.label}>
+          <TouchableOpacity style={styles.label} onPress= {() => setModalVisible2(true)}>
             <ThemedText type="subtitle" fontSize>
               Weekly hours
             </ThemedText>
-          </View>
+          </TouchableOpacity>
+          <Modal visible={ModalVisible2} animationType='slide' presentationStyle='pageSheet'>
+            <View style={styles.projectorPop}>
+                <Button
+                  title='Begin task'
+                  color='midnightblue'
+                  onPress={() => setCountdownPlaying(true)}
+                 />
+              <View style ={styles.countdown}>
+              <CountdownCircleTimer
+              isPlaying={isCountdownPlaying}
+              duration={7}
+              colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+              colorsTime={[7, 5, 2, 0]}
+              onComplete={() => setCountdownPlaying(false)}>
+              {({ remainingTime }) => <Text>{remainingTime}</Text>}
+              </CountdownCircleTimer>
+              </View>
+              <Button
+                  title='Finish'
+                  color='midnightblue'
+                  onPress={() => setCountdownPlaying(false)}
+                />
+              <Button
+                  title='Close'
+                  color='midnightblue'
+                  onPress={() => setModalVisible2(false)}
+                />
+            </View>
+          </Modal>
         </View>
         <View style={styles.projector}>
           <View>
@@ -55,11 +97,16 @@ export default function Profile() {
               <ThemedText type ='subtitle'>
                 Your expected workload for the week 
               </ThemedText>
-              <Button
-                title='Close'
-                color='midnightblue'
-                onPress={() => setModalVisible(false)}
+              <View style={styles.clock}>
+                <Entypo name='clock' size={60}/>
+              </View>
+              <View>
+                <Button
+                  title='Close'
+                  color='midnightblue'
+                  onPress={() => setModalVisible(false)}
                 />
+                </View>
             </View>
           </Modal>
         </View>
@@ -97,6 +144,9 @@ const styles = StyleSheet.create({
     marginTop: 60,
     marginLeft: 60,
   },
+  clock: {
+    marginLeft: 155,
+  },
   projector: {
     marginTop: 45,
     marginLeft: 60,
@@ -117,4 +167,9 @@ const styles = StyleSheet.create({
   font: {
     fontWeight: "bold",
   },
+  countdown: {
+    justifyContent: 'center',
+    marginLeft: 95
+  }
 });
+
