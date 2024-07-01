@@ -31,6 +31,7 @@ Create Events from the Calendar page for any date, which then can be accessed th
 
 ### Work-time tracker
 Track and record amount of time spent on different categories of tasks, glean statistics such as average time spent 
+
 <img width="327" alt="Time tracker" src="https://github.com/alterVega/SchedU/assets/164298842/da3bfefb-fe0e-4f19-8d3e-47f2ff512c2c">
 
 
