@@ -24,16 +24,13 @@ Create Events from the Calendar page for any date, which then can be accessed th
 <img width="626" alt="EventCreation" src="https://github.com/alterVega/SchedU/assets/164298842/9b2e7ac4-0463-4497-a561-b1e4b5423e07">
 
 
-
-
-
+### Profile page
 <img width="328" alt="Profile" src="https://github.com/alterVega/SchedU/assets/164298842/83ab8f79-7048-465c-92aa-2ec85c604620">
 
 ### Work-time tracker
 Track and record amount of time spent on different categories of tasks, glean statistics such as average time spent 
 
 <img width="327" alt="Time tracker" src="https://github.com/alterVega/SchedU/assets/164298842/da3bfefb-fe0e-4f19-8d3e-47f2ff512c2c">
-
 
 ### Weekly workload projector
 Crafted from insights from historical work-time data, receive estimates on projected workload for the week
