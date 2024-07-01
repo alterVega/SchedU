@@ -19,7 +19,11 @@ Create Events from the Calendar page for any date, which then can be accessed th
 
 <img width="329" alt="Schedule" src="https://github.com/alterVega/SchedU/assets/164298842/a1378298-32ab-4fba-8a89-12bc070c1b39">
 
+
+
 <img width="630" alt="Agenda" src="https://github.com/alterVega/SchedU/assets/164298842/427b31be-35be-4185-816b-385ad63919ff">
+
+
 
 <img width="626" alt="EventCreation" src="https://github.com/alterVega/SchedU/assets/164298842/9b2e7ac4-0463-4497-a561-b1e4b5423e07">
 
