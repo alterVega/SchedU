@@ -1,4 +1,4 @@
-# SchedU - Another level of timetable personalisation 📆
+<img width="329" alt="Schedule" src="https://github.com/alterVega/SchedU/assets/164298842/879b409e-1f7e-47af-b662-044d50e9b9cf"># SchedU - Another level of timetable personalisation 📆
 
 ![logoWithName (1)](https://github.com/alterVega/SchedU/assets/164298842/ecac7372-214d-4c5a-9f8f-1580afc54a0e)
 
@@ -16,6 +16,15 @@ https://youtu.be/6agKeX77MMk
 
 ### Calendar and Agenda
 Create Events from the Calendar page for any date, which then can be accessed through weekly Agenda page
+
+<img width="329" alt="Schedule" src="https://github.com/alterVega/SchedU/assets/164298842/a1378298-32ab-4fba-8a89-12bc070c1b39">
+
+<img width="630" alt="Agenda" src="https://github.com/alterVega/SchedU/assets/164298842/427b31be-35be-4185-816b-385ad63919ff">
+
+<img width="626" alt="EventCreation" src="https://github.com/alterVega/SchedU/assets/164298842/9b2e7ac4-0463-4497-a561-b1e4b5423e07">
+
+
+
 
 ### Work-time tracker
 Track and record amount of time spent on different categories of tasks, glean statistics such as average time spent 
