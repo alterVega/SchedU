@@ -42,6 +42,8 @@ Design and customize your timetable interface in whatever way you look with cust
    npm install
    npm install --save react-native-calendars
    npm install @react-native-community/datetimepicker --save
+   npm install react-native-vector-icons
+   yarn add react-native-countdown-circle-timer
    
    ```
 
