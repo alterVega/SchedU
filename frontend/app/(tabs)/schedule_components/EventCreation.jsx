@@ -9,29 +9,9 @@ import {
 } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useSQLiteContext } from "expo-sqlite/next";
 
-//new things to install
-import * as SQLite from "expo-sqlite";
-import * as FileSystem from "expo-file-system";
-import { Asset } from "expo-asset";
-import { StatusBar } from "expo-status-bar";
 
-const loadDatabase = async () => {
-  const dbName = "allEventsDB.db";
-  const dbAsset = require("../../../assets/allEventsDB.db");
-  const dbUri = Asset.fromModule(dbAsset).uri;
-  const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
-
-  //if there is this database, we use it else we create a new one
-  const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-  if (!fileInfo.exists) {
-    await FileSystem.makeDirectoryAsync(
-      `${FileSystem.documentDirectory}SQLite`,
-      { intermediates: true }
-    );
-    await FileSystem.downloadAsync(dbUri, dbFilePath);
-  }
-};
 
 export const EventCreation = ({ navigation }) => {
   const [text, onChangeText] = React.useState("");
@@ -46,29 +26,13 @@ export const EventCreation = ({ navigation }) => {
   //State for End Time
   const [endTime, setEndTime] = useState(new Date());
 
-  //State for database
-  const db = SQLite.useSQLiteContext();
-  const [dbLoaded, setDbLoaded] = useState(false);
-
   const onChangeDate = (event, selectedDate) => {
     setDate(selectedDate);
     setShowDate(false);
   };
 
-  useEffect(() => {
-    loadDatabase()
-      .then(() => setDbLoaded(true))
-      .catch((error) => console.log(error));
-  }, []);
-
-  if (!dbLoaded) {
-    return <Text>Loading...</Text>;
-  }
-
-  async function getData() {
-    const result = await db.getAllAsync(`SELECT * FROM Events`);
-    return result;
-  }
+  const db = useSQLiteContext();
+  const [dbLoaded, setDbLoaded] = useState(false);
 
   //handles adding events into the database
   async function addEvent() {
@@ -112,14 +76,29 @@ export const EventCreation = ({ navigation }) => {
         endMilliseconds
       )
     );
-    db.withTransactionAsync(async () => {
-      await db.runAsync(
-        `INSERT INTO Events (startTime, endTime, title, description) VALUES (?, ?, ?, ?);`,
-        [correctedStartTime.getTime(), correctedEndTime.getTime(), text, text2]
+    
+    await db.runAsync(
+      `CREATE TABLE IF NOT EXISTS Events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        startTime TIME NOT NULL,
+        endTime TIME NOT NULL,
+        title TEXT,
+        description TEXT
+        )`);
+           
+    await db.runAsync(
+     `INSERT INTO Events (startTime, endTime, title, description) VALUES (?, ?, ?, ?);`,
+           [correctedStartTime.getTime(), correctedEndTime.getTime(), text, text2]
       );
-      await getData();
-    });
+        
+
+    useEffect(() => {
+      db.withTransactionAsync(async () => {
+        await runResult();
+      })
+    }, [db]);
   }
+
 
   return (
     <ScrollView>
@@ -183,7 +162,7 @@ export const EventCreation = ({ navigation }) => {
       <View style={styles.createEvent}>
         <Button
           onPress={(event) => {
-            addEvent();
+            {addEvent(); navigation.navigate("Calendar", { selectedDay: event });} ;
           }}
           title="Create event"
           color="#841584"
