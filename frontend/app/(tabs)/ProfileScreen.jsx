@@ -9,26 +9,32 @@ import Octicon from "react-native-vector-icons/Octicons";
 import  Entypo from 'react-native-vector-icons/Entypo';
 import { useState } from 'react';
 import { CountdownCircleTimer, countdownCircleTimer } from 'react-native-countdown-circle-timer';
+import { SQLiteProvider, useSQLiteContext } from "expo-sqlite/next";
 
 //Recieve duration for the current task for the timer
 async function getDuration() {
   const result = await db.getAllAsync<Transaction>(
     `SELECT TIMESTAMPDIFF(MINUTE, endTime, startTime) AS duration
     FROM Events
-    WHERE NOW() BETWEEN startTime AND endTime;`)
+    WHERE CURRENT_TIMESTAMP BETWEEN startTime AND endTime;`)
 }
 
-export default function Profile() {
+export const ProfilePortion = ({ navigation }) => {
+  // db  
+  const db = useSQLiteContext();
+
   // query to calculate total hours for the current week
   async function getProjector() {
-    const result = await db.getAllAsync<Transaction>(
-      `SELECT SUM(TIMESTAMPDIFF(MINUTE, endTime, startTime)) AS duration 
+    const result = await db.getAllAsync(
+      `SELECT SUM(strftime('%s', endTime) - strftime('%s', startTime)) / 60 AS duration
       FROM Events
-      WHERE DATE(startTime) BETWEEN DATE(TIMESTAMPADD(DAY, -(DAYOFWEEK(NOW())), 
-          NOW())) AND DATE(TIMESTAMPADD(DAY, (7 - DAYOFWEEK(NOW())), NOW()))
-          AND startTime IS NOT NULL;`
-    )
+      WHERE date(startTime) BETWEEN date('now', 'weekday 0', '-6 days') AND date('now', 'weekday 0', '0 days')
+        AND startTime IS NOT NULL;
+      `)
+    console.log(result);
   }
+  const projectorDuration = getProjector().duration;
+
   const [ModalVisible, setModalVisible] = useState(false);
   const [ModalVisible2, setModalVisible2] = useState(false);
   const [isCountdownPlaying, setCountdownPlaying] = useState(false);
@@ -92,11 +98,18 @@ export default function Profile() {
               Workload projector
             </ThemedText>
           </TouchableOpacity>
+          <View>
+          <Text>
+            {projectorDuration}
+          </Text>
+          </View>
           <Modal visible={ModalVisible} animationType='slide' presentationStyle='pageSheet' >
             <View style ={styles.projectorPop}>
+              <TouchableOpacity onPress = {() => getProjector()}>
               <ThemedText type ='subtitle'>
                 Your expected workload for the week 
               </ThemedText>
+              </TouchableOpacity>
               <View style={styles.clock}>
                 <Entypo name='clock' size={60}/>
               </View>
@@ -172,4 +185,3 @@ const styles = StyleSheet.create({
     marginLeft: 95
   }
 });
-
