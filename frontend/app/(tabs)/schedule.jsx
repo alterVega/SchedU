@@ -6,21 +6,17 @@ import { EventCreation } from "./schedule_components/EventCreation";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SQLiteProvider } from "expo-sqlite";
+import * as SQLite from "expo-sqlite";
+import * as FileSystem from "expo-file-system";
+import { Asset } from "expo-asset";
+import { StatusBar } from "expo-status-bar";
 
 const Stack = createNativeStackNavigator();
 
 export default function ScheduleScreen() {
+
   return (
-    <Suspense
-      fallback={
-        <View style={{ flex: 1 }}>
-          <ActivityIndicator size={"large"} />
-          <Text>Loading Database...</Text>
-        </View>
-      }
-    >
-      <SQLiteProvider databaseName="allEventsDB.db" useSuspense={true}>
-        <NavigationContainer independent={true}>
+    <NavigationContainer independent={true}>
           <Stack.Navigator>
             <Stack.Screen
               name="Calendar"
@@ -38,9 +34,7 @@ export default function ScheduleScreen() {
               options={{ title: "Create an Event" }}
             />
           </Stack.Navigator>
-        </NavigationContainer>
-      </SQLiteProvider>
-    </Suspense>
+    </NavigationContainer>
   );
 }
 
