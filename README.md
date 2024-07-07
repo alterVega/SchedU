@@ -62,7 +62,7 @@ Design and customize your timetable interface in whatever way you look with cust
    npm install react-native-svg
    yarn add react-native-countdown-circle-timer
    ```
-   Database:
+   Database (SQLite Set Up):
    ```bash
    npx expo install expo-sqlite
    npx expo install expo-file-system expo-asset
