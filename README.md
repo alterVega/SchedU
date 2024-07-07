@@ -1,4 +1,4 @@
-# SchedU - Another level of timetable personalisation 📆
+# SchedU - Taking Timetable Personalisation Seriously! 📆
 
 ![logoWithName (1)](https://github.com/alterVega/SchedU/assets/164298842/ecac7372-214d-4c5a-9f8f-1580afc54a0e)
 
