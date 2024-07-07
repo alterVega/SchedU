@@ -50,8 +50,12 @@ Design and customize your timetable interface in whatever way you look with cust
 
 3. Install dependencies
 
+   Go into directory 
    ```bash
-   cd frontend
+      cd frontend
+   ```
+
+   ```bash
    npm install
    npm install --save react-native-calendars
    npm install @react-native-community/datetimepicker --save
