@@ -67,7 +67,7 @@ Design and customize your timetable interface in whatever way you look with cust
    npx expo install expo-sqlite
    npx expo install expo-file-system expo-asset
    ```
-
+**Note that you may have to close and re-open the project files on your code editor after installing the dependencies if you run into any errors**
 4. Start the app
 
    ```bash
