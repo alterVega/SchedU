@@ -51,12 +51,18 @@ Design and customize your timetable interface in whatever way you look with cust
 3. Install dependencies
 
    ```bash
+   cd frontend
    npm install
    npm install --save react-native-calendars
    npm install @react-native-community/datetimepicker --save
    npm install react-native-vector-icons
+   npm install react-native-svg
    yarn add react-native-countdown-circle-timer
-   
+   ```
+   Database:
+   ```bash
+   npx expo install expo-sqlite
+   npx expo install expo-file-system expo-asset
    ```
 
 2. Start the app
