@@ -52,7 +52,7 @@ Design and customize your timetable interface in whatever way you look with cust
 
    Go into directory 
    ```bash
-      cd frontend
+   cd frontend
    ```
 
    ```bash
