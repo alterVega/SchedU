@@ -48,13 +48,12 @@ Design and customize your timetable interface in whatever way you look with cust
    git clone https://github.com/alterVega/SchedU.git
    ```
 
-3. Install dependencies
-
-   Go into directory 
+2. Go into directory 
    ```bash
    cd frontend
    ```
 
+3. Install dependencies
    ```bash
    npm install
    npm install --save react-native-calendars
@@ -69,7 +68,7 @@ Design and customize your timetable interface in whatever way you look with cust
    npx expo install expo-file-system expo-asset
    ```
 
-2. Start the app
+4. Start the app
 
    ```bash
     npx expo start
