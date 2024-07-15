@@ -14,29 +14,6 @@ import { SQLiteProvider, useSQLiteContext } from "expo-sqlite/next";
 export const ProfilePortion = ({ navigation }) => {  
   // db  
   const db = useSQLiteContext();
-
-  //Recieve duration for the current task for the timer
-  const durationValue = async function getDuration() {
-    const resultDuration = await db.getAllAsync(
-      `SELECT ROUND(endTime - startTime) / 60000 AS duration
-      FROM Events
-      WHERE datetime(startTime / 1000, 'unixepoch') <= datetime('now') AND
-      datetime(ROUND(endTime / 1000), 'unixepoch') >= datetime('now');`)
-    console.log(resultDuration);
-    return resultDuration[0]['duration'];
-  }
-
-  // query to calculate total hours for the current week
-  async function getProjector() {
-    const resultProjector = await db.getAllAsync(
-      `SELECT SUM(ROUND((endTime - startTime) / 60000)) AS duration
-      FROM Events
-      WHERE DATETIME(ROUND(startTime / 1000), 'unixepoch') BETWEEN date('now', 'weekday 0', '-6 days') AND date('now', 'weekday 0', '0 days')
-        AND startTime IS NOT NULL;
-      `)
-    console.log(resultProjector[0]['duration']);
-    return resultProjector[0]['duration'];
-  }
   
   const [ModalVisible, setModalVisible] = useState(false);
   const [ModalVisible2, setModalVisible2] = useState(false);
@@ -60,7 +37,7 @@ export const ProfilePortion = ({ navigation }) => {
   React.useEffect(() => {
     async function getDuration() {
       const resultDuration = await db.getAllAsync(
-        `SELECT ROUND(endTime - startTime) / 60000 AS duration
+        `SELECT ROUND(endTime / 1000 - unixepoch()) AS duration
         FROM Events
         WHERE datetime(startTime / 1000, 'unixepoch') <= datetime('now') AND
         datetime(ROUND(endTime / 1000), 'unixepoch') >= datetime('now');`)
