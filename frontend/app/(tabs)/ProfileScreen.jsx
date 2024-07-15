@@ -7,37 +7,69 @@ import Ionicon from "react-native-vector-icons/Ionicons";
 import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import Octicon from "react-native-vector-icons/Octicons";
 import  Entypo from 'react-native-vector-icons/Entypo';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { CountdownCircleTimer, countdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { SQLiteProvider, useSQLiteContext } from "expo-sqlite/next";
 
-//Recieve duration for the current task for the timer
-async function getDuration() {
-  const result = await db.getAllAsync<Transaction>(
-    `SELECT TIMESTAMPDIFF(MINUTE, endTime, startTime) AS duration
-    FROM Events
-    WHERE CURRENT_TIMESTAMP BETWEEN startTime AND endTime;`)
-}
-
-export const ProfilePortion = ({ navigation }) => {
+export const ProfilePortion = ({ navigation }) => {  
   // db  
   const db = useSQLiteContext();
 
+  //Recieve duration for the current task for the timer
+  const durationValue = async function getDuration() {
+    const resultDuration = await db.getAllAsync(
+      `SELECT ROUND(endTime - startTime) / 60000 AS duration
+      FROM Events
+      WHERE datetime(startTime / 1000, 'unixepoch') <= datetime('now') AND
+      datetime(ROUND(endTime / 1000), 'unixepoch') >= datetime('now');`)
+    console.log(resultDuration);
+    return resultDuration[0]['duration'];
+  }
+
   // query to calculate total hours for the current week
   async function getProjector() {
-    const result = await db.getAllAsync(
-      `SELECT SUM(strftime('%s', endTime) - strftime('%s', startTime)) / 60 AS duration
+    const resultProjector = await db.getAllAsync(
+      `SELECT SUM(ROUND((endTime - startTime) / 60000)) AS duration
       FROM Events
-      WHERE date(startTime) BETWEEN date('now', 'weekday 0', '-6 days') AND date('now', 'weekday 0', '0 days')
+      WHERE DATETIME(ROUND(startTime / 1000), 'unixepoch') BETWEEN date('now', 'weekday 0', '-6 days') AND date('now', 'weekday 0', '0 days')
         AND startTime IS NOT NULL;
       `)
-    console.log(result);
+    console.log(resultProjector[0]['duration']);
+    return resultProjector[0]['duration'];
   }
-  const projectorDuration = getProjector().duration;
-
+  
   const [ModalVisible, setModalVisible] = useState(false);
   const [ModalVisible2, setModalVisible2] = useState(false);
   const [isCountdownPlaying, setCountdownPlaying] = useState(false);
+  const [projectorValue, setProjectorValue] = useState(0);
+  const [trackerValue, setTrackerValue] = useState(0);
+
+  React.useEffect(() => {
+    async function getProjector() {
+      const resultProjector = await db.getAllAsync(
+        `SELECT SUM(ROUND((endTime - startTime) / 60000)) AS duration
+        FROM Events
+        WHERE DATETIME(ROUND(startTime / 1000), 'unixepoch') BETWEEN date('now', 'weekday 0', '-6 days') AND date('now', 'weekday 0', '0 days')
+          AND startTime IS NOT NULL;
+        `)
+        setProjectorValue(resultProjector[0]['duration']);
+      }
+      getProjector();
+    }, []);
+
+  React.useEffect(() => {
+    async function getDuration() {
+      const resultDuration = await db.getAllAsync(
+        `SELECT ROUND(endTime - startTime) / 60000 AS duration
+        FROM Events
+        WHERE datetime(startTime / 1000, 'unixepoch') <= datetime('now') AND
+        datetime(ROUND(endTime / 1000), 'unixepoch') >= datetime('now');`)
+      setTrackerValue(resultDuration[0]['duration']);
+    }
+    getDuration();
+  }, []);
+
+
   return (
     <ImageBackground
       source={require("@/assets/images/noticeboardbg.png")}
@@ -69,9 +101,8 @@ export const ProfilePortion = ({ navigation }) => {
               <View style ={styles.countdown}>
               <CountdownCircleTimer
               isPlaying={isCountdownPlaying}
-              duration={7}
+              duration={trackerValue}
               colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-              colorsTime={[7, 5, 2, 0]}
               onComplete={() => setCountdownPlaying(false)}>
               {({ remainingTime }) => <Text>{remainingTime}</Text>}
               </CountdownCircleTimer>
@@ -93,23 +124,21 @@ export const ProfilePortion = ({ navigation }) => {
           <View>
             <MaterialIcon name="projector" size={60} color="black" />
           </View>
-          <TouchableOpacity style={styles.label} onPress= {() => setModalVisible(true)}>
+          <TouchableOpacity style={styles.label} onPress= {() => {setModalVisible(true)}}>
             <ThemedText type="subtitle" fontSize>
               Workload projector
             </ThemedText>
           </TouchableOpacity>
-          <View>
-          <Text>
-            {projectorDuration}
-          </Text>
-          </View>
           <Modal visible={ModalVisible} animationType='slide' presentationStyle='pageSheet' >
             <View style ={styles.projectorPop}>
-              <TouchableOpacity onPress = {() => getProjector()}>
               <ThemedText type ='subtitle'>
-                Your expected workload for the week 
+                Your expected workload for the week is
               </ThemedText>
-              </TouchableOpacity>
+              <View>
+              <Text type ='subtitle' style={styles.projectedhours}>
+                {projectorValue} minutes 
+              </Text>
+              </View>
               <View style={styles.clock}>
                 <Entypo name='clock' size={60}/>
               </View>
@@ -183,5 +212,10 @@ const styles = StyleSheet.create({
   countdown: {
     justifyContent: 'center',
     marginLeft: 95
+  },
+  projectedhours: {
+    fontSize: 50,
+    marginLeft: 65
   }
 });
+
