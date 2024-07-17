@@ -60,7 +60,9 @@ Design and customize your timetable interface in whatever way you look with cust
    npm install @react-native-community/datetimepicker --save
    npm install react-native-vector-icons
    npm install react-native-svg
-   yarn add react-native-countdown-circle-timer
+   npm install react-native-countdown-circle-timer
+   npx expo install @react-native-picker/picker
+   npm install react-native-color-picker
    ```
    Database (SQLite Set Up):
    ```bash
