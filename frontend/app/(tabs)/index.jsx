@@ -1,55 +1,41 @@
-import { Image, StyleSheet } from "react-native";
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import React, { useContext } from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { AgendaPortion } from "./schedule_components/agenda";
+import { CalendarPortion } from "./schedule_components/calendar";
+import { EventCreation } from "./schedule_components/EventCreation";
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as SQLite from "expo-sqlite";
-import * as FileSystem from "expo-file-system";
-import { Asset } from "expo-asset";
-import { StatusBar } from "expo-status-bar";
+import { GlobalStyleContext } from "../globalStyle";
 
 const Stack = createNativeStackNavigator();
 
-export default function HomeScreen() {
+export default function ScheduleScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#FFFFFF", dark: "#f2dea7" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/SchedU_logo.png")}
-          style={styles.Logo}
+    <NavigationContainer independent={true}>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Calendar"
+          component={CalendarPortion}
+          options={{ title: "Your calendar" }}
         />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome USER_NAME!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">hi</ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <Stack.Screen
+          name="Agenda"
+          component={AgendaPortion}
+          options={{ title: "Your Agenda" }}
+        />
+        <Stack.Screen
+          name="EventCreation"
+          component={EventCreation}
+          options={{ title: "Create an Event" }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  Logo: {
-    height: 230,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
   },
 });
-
-

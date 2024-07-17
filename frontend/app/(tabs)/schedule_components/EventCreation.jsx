@@ -1,59 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
-  Button,
+  TouchableOpacity,
   ScrollView,
 } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useSQLiteContext } from "expo-sqlite/next";
-
-
+import { GlobalStyleContext } from "../../globalStyle";
 
 export const EventCreation = ({ navigation }) => {
-  const [text, onChangeText] = React.useState("");
-  const [text2, onChangeText2] = React.useState("");
-
-  //State for the date picker
+  const [text, onChangeText] = useState("");
+  const [text2, onChangeText2] = useState("");
   const [date, setDate] = useState(new Date());
-
-  //State for the Start Time
   const [startTime, setStartTime] = useState(new Date());
-
-  //State for End Time
   const [endTime, setEndTime] = useState(new Date());
-
-  const onChangeDate = (event, selectedDate) => {
-    setDate(selectedDate);
-    setShowDate(false);
-  };
-
   const db = useSQLiteContext();
-  const [dbLoaded, setDbLoaded] = useState(false);
 
-  //handles adding events into the database
-  async function addEvent() {
-    //input date
+  const { globalStyle } = useContext(GlobalStyleContext);
+
+  const handleAddEvent = async () => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
-
-    //startTime
     const startHours = startTime.getHours();
     const startMinutes = startTime.getMinutes();
     const startSeconds = startTime.getSeconds();
     const startMilliseconds = startTime.getMilliseconds();
-
-    //startTime
     const endHours = endTime.getHours();
     const endMinutes = endTime.getMinutes();
     const endSeconds = endTime.getSeconds();
     const endMilliseconds = endTime.getMilliseconds();
 
-    //Correcting the data before sending into database
     const correctedStartTime = new Date(
       Date.UTC(
         year,
@@ -76,7 +57,7 @@ export const EventCreation = ({ navigation }) => {
         endMilliseconds
       )
     );
-    
+
     await db.runAsync(
       `CREATE TABLE IF NOT EXISTS Events (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,26 +65,27 @@ export const EventCreation = ({ navigation }) => {
         endTime TIME NOT NULL,
         title TEXT,
         description TEXT
-        )`);
-           
+      )`
+    );
+
     await db.runAsync(
-     `INSERT INTO Events (startTime, endTime, title, description) VALUES (?, ?, ?, ?);`,
-           [correctedStartTime.getTime(), correctedEndTime.getTime(), text, text2]
-      );
-        
+      `INSERT INTO Events (startTime, endTime, title, description) VALUES (?, ?, ?, ?);`,
+      [correctedStartTime.getTime(), correctedEndTime.getTime(), text, text2]
+    );
 
-    useEffect(() => {
-      db.withTransactionAsync(async () => {
-        await runResult();
-      })
-    }, [db]);
-  }
-
+    navigation.navigate("Calendar");
+  };
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText
+          type="subtitle"
+          style={[
+            styles.title,
+            { fontFamily: globalStyle.fontFamily, color: globalStyle.color },
+          ]}
+        >
           Event
         </ThemedText>
         <TextInput
@@ -115,7 +97,13 @@ export const EventCreation = ({ navigation }) => {
         />
       </View>
       <View style={styles.container}>
-        <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText
+          type="subtitle"
+          style={[
+            styles.title,
+            { fontFamily: globalStyle.fontFamily, color: globalStyle.color },
+          ]}
+        >
           Description
         </ThemedText>
         <TextInput
@@ -129,7 +117,14 @@ export const EventCreation = ({ navigation }) => {
       </View>
       <View style={styles.container2}>
         <View style={styles.dateTime}>
-          <Text style={styles.choose}>Choose Date:</Text>
+          <Text
+            style={[
+              styles.choose,
+              { fontFamily: globalStyle.fontFamily, color: globalStyle.color },
+            ]}
+          >
+            Choose Date:
+          </Text>
           <DateTimePicker
             value={date}
             mode={"date"}
@@ -139,7 +134,14 @@ export const EventCreation = ({ navigation }) => {
           />
         </View>
         <View style={styles.dateTime}>
-          <Text style={styles.choose}>Choose Start Time:</Text>
+          <Text
+            style={[
+              styles.choose,
+              { fontFamily: globalStyle.fontFamily, color: globalStyle.color },
+            ]}
+          >
+            Choose Start Time:
+          </Text>
           <DateTimePicker
             value={startTime}
             mode={"time"}
@@ -149,7 +151,14 @@ export const EventCreation = ({ navigation }) => {
           />
         </View>
         <View style={styles.dateTime}>
-          <Text style={styles.choose}>Choose End Time:</Text>
+          <Text
+            style={[
+              styles.choose,
+              { fontFamily: globalStyle.fontFamily, color: globalStyle.color },
+            ]}
+          >
+            Choose End Time:
+          </Text>
           <DateTimePicker
             value={endTime}
             mode={"time"}
@@ -159,72 +168,81 @@ export const EventCreation = ({ navigation }) => {
           />
         </View>
       </View>
-      <View style={styles.createEvent}>
-        <Button
-          onPress={(event) => {
-            {addEvent(); navigation.navigate("Calendar", { selectedDay: event });} ;
-          }}
-          title="Create event"
-          color="#841584"
-          style={styles.create}
-        />
-      </View>
+      <TouchableOpacity
+        style={styles.createEventButton}
+        onPress={handleAddEvent}
+      >
+        <Text
+          style={[
+            styles.buttonText,
+            { fontFamily: globalStyle.fontFamily, color: globalStyle.color },
+          ]}
+        >
+          Create Event
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingVertical: 20,
+  },
   dateTime: {
-    flex: 2,
-    marginTop: 20,
-    alignContent: "center",
+    flex: 1,
+    margin: 10,
   },
   container: {
-    marginTop: 40,
+    marginVertical: 10,
+    marginHorizontal: 20,
   },
   container2: {
     flexDirection: "row",
-    flex: 1,
-    alignContent: "space-evenly",
-    textAlign: "center",
-    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 20,
+    marginVertical: 10,
   },
   titleInput: {
-    flex: 3,
     height: 40,
-    margin: 25,
+    borderColor: "#ccc",
     borderWidth: 1,
-    padding: 10,
-    flexDirection: "row",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    color: "#333",
   },
   titleInputDesc: {
-    flex: 3,
     height: 100,
-    margin: 25,
+    borderColor: "#ccc",
     borderWidth: 1,
-    padding: 10,
-    flexDirection: "row",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    color: "#333",
   },
   title: {
-    flex: 1,
-    flexDirection: "row",
-    alignSelf: "center",
     fontSize: 20,
-    color: "black",
+    marginBottom: 5,
+    color: "Black",
   },
-  createEvent: {
-    marginTop: 40,
-    alignSelf: "center",
-    borderWidth: 2,
+  createEventButton: {
+    backgroundColor: "#8ab2f2",
+    padding: 15,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginVertical: 20,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
   },
   picker: {
-    flex: 1,
-    alignSelf: "left",
-    marginTop: 5,
+    width: "100%",
   },
   choose: {
-    flex: 1,
-    marginLeft: 5,
-    fontSize: 20,
+    fontSize: 16,
+    marginBottom: 5,
   },
 });
