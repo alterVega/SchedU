@@ -7,6 +7,7 @@ import {
   Button,
   View,
   Text,
+  ScrollView,
 } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import Ionicon from "react-native-vector-icons/Ionicons";
@@ -14,6 +15,7 @@ import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import Octicon from "react-native-vector-icons/Octicons";
 import Entypo from "react-native-vector-icons/Entypo";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { useCountdown } from 'react-native-countdown-circle-timer';
 import { useSQLiteContext } from "expo-sqlite/next";
 import { GlobalStyleContext } from "../globalStyle";
 import { useLoadFonts } from "../useFonts";
@@ -25,9 +27,12 @@ export const ProfilePortion = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible3, setModalVisible3] = useState(false);
+  const [modalVisible4, setModalVisible4] = useState(false);
   const [isCountdownPlaying, setCountdownPlaying] = useState(false);
   const [projectorValue, setProjectorValue] = useState(0);
   const [trackerValue, setTrackerValue] = useState(0);
+  const [currentID, setCurrentID] = useState(null);
+  const [currentTask, setCurrentTask] = useState('None!');
   const [selectedFont, setSelectedFont] = useState("default");
   const [fontColor, setFontColor] = useState({ r: 0, g: 0, b: 0 });
   const [backgroundColor, setBackgroundColor] = useState({
@@ -35,6 +40,17 @@ export const ProfilePortion = ({ navigation }) => {
     g: 255,
     b: 255,
   });
+
+  const {
+    path,
+    pathLength,
+    stroke,
+    strokeDashoffset,
+    remainingTime,
+    elapsedTime,
+    size,
+    strokeWidth,
+  } = useCountdown({ isPlaying: true, duration: 7, colors: '#abc' })
 
   const { globalStyle, setGlobalStyle } = useContext(GlobalStyleContext);
   const fontsLoaded = useLoadFonts();
@@ -44,26 +60,39 @@ export const ProfilePortion = ({ navigation }) => {
       const resultProjector = await db.getAllAsync(
         `SELECT SUM(ROUND((endTime - startTime) / 60000)) AS duration
         FROM Events
-        WHERE DATETIME(ROUND(startTime / 1000), 'unixepoch') BETWEEN date('now', 'weekday 0', '-6 days') AND date('now', 'weekday 0', '0 days')
+        WHERE DATETIME(ROUND(startTime / 1000), 'unixepoch') BETWEEN date('now', 'localtime', 'weekday 0', '-6 days') AND date('now', 'localtime', 'weekday 0', '0 days')
           AND startTime IS NOT NULL;`
       );
       setProjectorValue(resultProjector[0]["duration"]);
     }
     getProjector();
   }, []);
-
+  
   useEffect(() => {
     async function getDuration() {
       const resultDuration = await db.getAllAsync(
-        `SELECT ROUND(endTime / 1000 - unixepoch()) AS duration
+        `SELECT ((endTime - startTime) / 1000) AS duration, title
         FROM Events
-        WHERE datetime(startTime / 1000, 'unixepoch') <= datetime('now') AND
-        datetime(ROUND(endTime / 1000), 'unixepoch') >= datetime('now');`
+        WHERE datetime(startTime / 1000, 'unixepoch') <= datetime('now', 'localtime') AND
+        datetime(ROUND(endTime / 1000), 'unixepoch') >= datetime('now', 'localtime'); AND
+        datetime('now', 'localtime') <= (startTime + ((endTime - startTime) / 2000)));`
       );
+      console.log(resultDuration)
       setTrackerValue(resultDuration[0]["duration"]);
+      setCurrentTask(resultDuration[0]['title'])
+      setCurrentID(resultDuration[0]['id'])
     }
     getDuration();
   }, []);
+  
+  async function completeTask(id) {
+    await db.withTransactionAsync(async () => {
+      await db.runAsync(`UPDATE Events
+        SET completed = 'TRUE' 
+        WHERE id = ?;`, [id]);
+    });
+  }
+  
 
   const applyGlobalStyle = () => {
     setGlobalStyle({
@@ -97,9 +126,9 @@ export const ProfilePortion = ({ navigation }) => {
             </View>
             <TouchableOpacity
               style={styles.label}
-              onPress={() => setModalVisible2(true)}
+              onPress={() => {setModalVisible2(true)}}
             >
-              <Text style={styles.subtitle}>Work-time tracker</Text>
+              <Text style={styles.subtitle}>Work tracker</Text>
             </TouchableOpacity>
             <Modal
               visible={modalVisible2}
@@ -107,6 +136,9 @@ export const ProfilePortion = ({ navigation }) => {
               presentationStyle="pageSheet"
             >
               <View style={styles.modalContent}>
+                <Text style={styles.subtitle}>
+                  Current task: {currentTask}
+                </Text>
                 <Button
                   title="Begin task"
                   color="midnightblue"
@@ -117,7 +149,7 @@ export const ProfilePortion = ({ navigation }) => {
                     isPlaying={isCountdownPlaying}
                     duration={trackerValue}
                     colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-                    onComplete={() => setCountdownPlaying(false)}
+                    onComplete={() => {setCountdownPlaying(false);}}
                   >
                     {({ remainingTime }) => <Text>{remainingTime}</Text>}
                   </CountdownCircleTimer>
@@ -125,7 +157,7 @@ export const ProfilePortion = ({ navigation }) => {
                 <Button
                   title="Finish"
                   color="midnightblue"
-                  onPress={() => setCountdownPlaying(false)}
+                  onPress={() => {setCountdownPlaying(false);  setModalVisible4(true)}}
                 />
                 <Button
                   title="Close"
@@ -133,6 +165,37 @@ export const ProfilePortion = ({ navigation }) => {
                   onPress={() => setModalVisible2(false)}
                 />
               </View>
+              <Modal
+              visible={modalVisible4}
+              animationType="slide"
+              presentationStyle="pageSheet"
+            >
+            <View style={styles.completionScreen}>
+              <View>
+                <Text style={styles.taskComplete}>
+                  Task complete! {'\n'}
+                  You saved {(trackerValue - remainingTime)/60 > 0 ? 
+                    Math.round((trackerValue - remainingTime)/60): 0} minutes! {'\n'}
+                </Text>
+              </View>
+              <View style={styles.workTracker}>
+                <Ionicon name="checkmark-done-sharp" size={60} color="black" />
+
+                <TouchableOpacity onPress={() => {
+                  {completeTask(currentID); setModalVisible4(false)};
+                }}>
+                  <Text style={styles.subtitle}>
+                    Mark task as completed
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Button
+                  title="Close"
+                  color="midnightblue"
+                  onPress={() => setModalVisible4(false)}
+                />
+            </View>
+            </Modal>
             </Modal>
           </View>
 
@@ -153,11 +216,11 @@ export const ProfilePortion = ({ navigation }) => {
             >
               <View style={styles.modalContent}>
                 <Text style={styles.subtitle}>
-                  Your expected workload for the week is
+                  Your expected workload for the week is:
                 </Text>
                 <View>
                   <Text type="subtitle" style={styles.projectedhours}>
-                    {projectorValue} minutes
+                    {projectorValue} minutes!
                   </Text>
                 </View>
                 <View style={styles.clock}>
@@ -191,6 +254,7 @@ export const ProfilePortion = ({ navigation }) => {
               animationType="slide"
               presentationStyle="pageSheet"
             >
+              <ScrollView>
               <View style={styles.modalContent}>
                 <Text style={styles.subtitle}>Choose your design</Text>
                 <FontPicker
@@ -317,6 +381,7 @@ export const ProfilePortion = ({ navigation }) => {
                   onPress={() => setModalVisible3(false)}
                 />
               </View>
+              </ScrollView>
             </Modal>
           </View>
         </View>
@@ -374,7 +439,7 @@ const styles = StyleSheet.create({
   },
   projectedhours: {
     fontSize: 50,
-    marginLeft: 65,
+    alignSelf: 'center'
   },
   subtitle: {
     fontSize: 20,
@@ -403,4 +468,16 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 10,
   },
+  taskComplete: {
+    fontSize: 20,
+    color: "black",
+    alignSelf: 'center'
+  },
+  completionScreen: {
+    alignitems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    padding: 80
+  }
 });
+
