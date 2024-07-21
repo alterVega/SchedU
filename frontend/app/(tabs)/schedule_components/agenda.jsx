@@ -4,6 +4,7 @@ import { Agenda } from "react-native-calendars";
 import { Card } from "react-native-paper";
 import { useSQLiteContext } from "expo-sqlite/next";
 import { GlobalStyleContext } from "../../globalStyle";
+import Ionicon from "react-native-vector-icons/Ionicons";
 
 const timeToString = (time) => {
   const date = new Date(time);
@@ -44,6 +45,7 @@ export const AgendaPortion = ({ route, navigation }) => {
             endTime: dbList[i].endTime,
             name: dbList[i].title,
             desc: dbList[i].description,
+            completed: dbList[i].completed,
             height: 50,
           },
         ];
@@ -54,6 +56,7 @@ export const AgendaPortion = ({ route, navigation }) => {
           endTime: dbList[i].endTime,
           name: dbList[i].title,
           desc: dbList[i].description,
+          completed: dbList[i].completed,
           height: 50,
         });
       }
@@ -153,6 +156,11 @@ export const AgendaPortion = ({ route, navigation }) => {
                 {item.desc}
               </Text>
             </View>
+            <View>
+              {
+                item.completed == 'TRUE' ?<Ionicon name="checkmark-done-sharp" size={60} color="black"/>: null
+              }
+            </View>
           </Card.Content>
         </Card>
       </TouchableOpacity>
@@ -230,3 +238,4 @@ const styles = StyleSheet.create({
     color: "blue",
   },
 });
+
