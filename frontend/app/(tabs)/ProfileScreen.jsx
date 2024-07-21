@@ -71,13 +71,13 @@ export const ProfilePortion = ({ navigation }) => {
   useEffect(() => {
     async function getDuration() {
       const resultDuration = await db.getAllAsync(
-        `SELECT ((endTime - startTime) / 1000) AS duration, title
+        `SELECT ((endTime - startTime) / 1000) AS duration, title, id
         FROM Events
         WHERE datetime(startTime / 1000, 'unixepoch') <= datetime('now', 'localtime') AND
         datetime(ROUND(endTime / 1000), 'unixepoch') >= datetime('now', 'localtime'); AND
         datetime('now', 'localtime') <= (startTime + ((endTime - startTime) / 2000)));`
       );
-      console.log(resultDuration)
+      console.log(resultDuration[0]['id'])
       setTrackerValue(resultDuration[0]["duration"]);
       setCurrentTask(resultDuration[0]['title'])
       setCurrentID(resultDuration[0]['id'])
@@ -86,11 +86,9 @@ export const ProfilePortion = ({ navigation }) => {
   }, []);
   
   async function completeTask(id) {
-    await db.withTransactionAsync(async () => {
-      await db.runAsync(`UPDATE Events
+    await db.runAsync(`UPDATE Events
         SET completed = 'TRUE' 
         WHERE id = ?;`, [id]);
-    });
   }
   
 
@@ -480,4 +478,3 @@ const styles = StyleSheet.create({
     padding: 80
   }
 });
-
