@@ -80,7 +80,7 @@ Design and customize your timetable interface in whatever way you look with cust
 
 ## Alternatively, if you have the Expo Go app installed on your tablet/phone
 
-   <img width="229" alt="Screenshot 2024-07-08 at 3 53 55 PM" src="https://github.com/alterVega/SchedU/assets/164298842/f295385c-67d7-4c8d-9e11-5c14d3430cf4">
+   <img width="226" alt="Screenshot 2024-07-25 at 2 25 25 PM" src="https://github.com/user-attachments/assets/3ce71954-24bb-47df-9dda-b709374c4c48">
 
 
 
