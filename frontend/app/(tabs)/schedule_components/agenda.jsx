@@ -161,9 +161,9 @@ export const AgendaPortion = ({ route, navigation }) => {
               </Text>
             </View>
             <View>
-              {
-                item.completed == 'TRUE' ?<Ionicon name="checkmark-done-sharp" size={60} color="black"/>: null
-              }
+              {item.completed == "TRUE" ? (
+                <Ionicon name="checkmark-done-sharp" size={60} color="black" />
+              ) : null}
             </View>
           </Card.Content>
         </Card>
@@ -242,5 +242,3 @@ const styles = StyleSheet.create({
     color: "blue",
   },
 });
-
-

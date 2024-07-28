@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -14,16 +14,24 @@ import { GlobalStyleContext } from "../../globalStyle";
 
 export const EventDetails = ({ navigation, route }) => {
   const selectedEvent = route.params.selectedItem;
+
+  // Subtract 8 hours (28800000 milliseconds) from the start and end times
+  const adjustedStartTime = new Date(
+    new Date(selectedEvent.startTime).getTime() - 8 * 60 * 60 * 1000
+  );
+  const adjustedEndTime = new Date(
+    new Date(selectedEvent.endTime).getTime() - 8 * 60 * 60 * 1000
+  );
+
   const [text, onChangeText] = useState(selectedEvent.name);
   const [text2, onChangeText2] = useState(selectedEvent.desc);
-  const [date, setDate] = useState(new Date());
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
+  const [date, setDate] = useState(new Date(selectedEvent.startTime));
+  const [startTime, setStartTime] = useState(adjustedStartTime);
+  const [endTime, setEndTime] = useState(adjustedEndTime);
   const db = useSQLiteContext();
-
   const { globalStyle } = useContext(GlobalStyleContext);
 
-  const handleAddEvent = async () => {
+  const handleEditEvent = async () => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
@@ -58,13 +66,19 @@ export const EventDetails = ({ navigation, route }) => {
         endMilliseconds
       )
     );
-    await db.runAsync(
-      `DELETE FROM Events
-      WHERE id = ?;`, [selectedEvent.id]);
 
-    await db.runAsync(
-      `INSERT INTO Events (startTime, endTime, title, description, completed) VALUES (?, ?, ?, ?, ?);`,
-      [correctedStartTime.getTime(), correctedEndTime.getTime(), text, text2,'FALSE'])
+    await db.withTransactionAsync(async () => {
+      await db.runAsync(
+        `UPDATE Events SET startTime = ?, endTime = ?, title = ?, description = ? WHERE id = ?;`,
+        [
+          correctedStartTime.getTime(),
+          correctedEndTime.getTime(),
+          text,
+          text2,
+          selectedEvent.id,
+        ]
+      );
+    });
 
     navigation.navigate("Calendar");
   };
@@ -86,7 +100,6 @@ export const EventDetails = ({ navigation, route }) => {
           onChangeText={onChangeText}
           value={text}
           placeholder={selectedEvent.name}
-          placeholderTextColor={"grey"}
         />
       </View>
       <View style={styles.container}>
@@ -105,7 +118,6 @@ export const EventDetails = ({ navigation, route }) => {
           value={text2}
           multiline={true}
           placeholder={selectedEvent.desc}
-          placeholderTextColor={"grey"}
         />
       </View>
       <View style={styles.container2}>
@@ -122,7 +134,7 @@ export const EventDetails = ({ navigation, route }) => {
             value={date}
             mode={"date"}
             is24Hour={true}
-            onChange={(event, date) => setDate(date)}
+            onChange={(event, date) => setDate(date || new Date())}
             style={styles.picker}
           />
         </View>
@@ -139,7 +151,7 @@ export const EventDetails = ({ navigation, route }) => {
             value={startTime}
             mode={"time"}
             is24Hour={true}
-            onChange={(event, time) => setStartTime(time)}
+            onChange={(event, time) => setStartTime(time || new Date())}
             style={styles.picker}
           />
         </View>
@@ -156,19 +168,22 @@ export const EventDetails = ({ navigation, route }) => {
             value={endTime}
             mode={"time"}
             is24Hour={true}
-            onChange={(event, time) => setEndTime(time)}
+            onChange={(event, time) => setEndTime(time || new Date())}
             style={styles.picker}
           />
         </View>
       </View>
       <TouchableOpacity
         style={styles.createEventButton}
-        onPress={handleAddEvent}
+        onPress={handleEditEvent}
       >
         <Text
           style={[
             styles.buttonText,
-            { fontFamily: globalStyle.fontFamily, color: globalStyle.color },
+            {
+              fontFamily: globalStyle.fontFamily,
+              color: globalStyle.color,
+            },
           ]}
         >
           Edit Event
@@ -198,26 +213,23 @@ const styles = StyleSheet.create({
   },
   titleInput: {
     height: 40,
-    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     fontSize: 16,
-    color: "#333",
+    borderColor: "#ccc",
   },
   titleInputDesc: {
     height: 100,
-    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     fontSize: 16,
-    color: "#333",
+    borderColor: "#ccc",
   },
   title: {
     fontSize: 20,
     marginBottom: 5,
-    color: "Black",
   },
   createEventButton: {
     backgroundColor: "#8ab2f2",
@@ -228,7 +240,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#fff",
     fontSize: 18,
   },
   picker: {
