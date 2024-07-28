@@ -100,6 +100,10 @@ export const AgendaPortion = ({ route, navigation }) => {
           deleteEvent(item.id);
           setRefresh(!refresh); // Trigger re-render
         }}
+        onPress={() => {
+          navigation.navigate("EventDetails", { selectedItem: item });
+          console.log(item);
+        }}
       >
         <Card
           style={[
@@ -238,4 +242,5 @@ const styles = StyleSheet.create({
     color: "blue",
   },
 });
+
 
