@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from "react-native";
 import { AgendaPortion } from "./schedule_components/agenda";
 import { CalendarPortion } from "./schedule_components/calendar";
 import { EventCreation } from "./schedule_components/EventCreation";
+import { EventDetails } from "./schedule_components/EventDetails";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GlobalStyleContext } from "../globalStyle";
@@ -28,6 +29,11 @@ export default function ScheduleScreen() {
           component={EventCreation}
           options={{ title: "Create an Event" }}
         />
+        <Stack.Screen
+          name="EventDetails"
+          component={EventDetails}
+          options={{title: "Edit Event"}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -39,3 +45,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
+
