@@ -38,7 +38,8 @@ Obtain a countdown timer of your current task, based on the current time. Track 
 ### Weekly workload projector
 Receive an estimated workload value for the current week, based on your scheduled events lying in the same week
 
-<img width="309" alt="Screenshot 2024-07-28 at 4 30 35 PM" src="https://github.com/user-attachments/assets/da35e249-6c01-4d91-9025-b2e666f0f499">
+<img width="346" alt="Screenshot 2024-07-28 at 4 35 33 PM" src="https://github.com/user-attachments/assets/70c8e6b3-29f3-409f-a407-de7554051dd2">
+
 
 
 ### Designer tools 
@@ -47,6 +48,9 @@ Design and customize your timetable interface in whatever way you look with cust
 ![Design](https://github.com/user-attachments/assets/50ea391a-9686-4860-bc4a-0bfaad0187af)
 
 ![Calendar customization](https://github.com/user-attachments/assets/605671c5-2c78-4fc8-bb8f-dbf227fe3bed)
+
+![Calendar customization 2](https://github.com/user-attachments/assets/dbdae4ed-bcc2-4cbd-a977-99f1342ca874)
+
 
 
 
