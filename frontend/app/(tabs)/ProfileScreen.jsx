@@ -60,10 +60,11 @@ export const ProfilePortion = ({ navigation }) => {
       const resultProjector = await db.getAllAsync(
         `SELECT SUM(ROUND((endTime - startTime) / 60000)) AS duration
         FROM Events
-        WHERE DATETIME(ROUND(startTime / 1000), 'unixepoch') BETWEEN date('now', 'localtime', 'weekday 0', '-6 days') AND date('now', 'localtime', 'weekday 0', '0 days')
+        WHERE DATETIME(ROUND(startTime / 1000), 'unixepoch') BETWEEN date('now', 'localtime', 'weekday 0', '-7 days') AND date('now', 'localtime', 'weekday 0', '+1 days')
           AND startTime IS NOT NULL;`
       );
       setProjectorValue(resultProjector[0]["duration"]);
+      console.log(resultProjector)
     }
     getProjector();
   }, []);
