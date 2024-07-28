@@ -27,16 +27,26 @@ Create Events from the Calendar page for any date, which then can be accessed th
 ### Profile page
 <img width="328" alt="Profile" src="https://github.com/alterVega/SchedU/assets/164298842/83ab8f79-7048-465c-92aa-2ec85c604620">
 
-### Work-time tracker
-Track and record amount of time spent on different categories of tasks, glean statistics such as average time spent 
+### Work tracker
+Obtain a countdown timer of your current task, based on the current time. Track and record the amount of time spent on the current task, glean statistics in minutes saved on the current task, and mark Task as complete!
 
-<img width="327" alt="Time tracker" src="https://github.com/alterVega/SchedU/assets/164298842/da3bfefb-fe0e-4f19-8d3e-47f2ff512c2c">
+<img width="324" alt="Screenshot 2024-07-28 at 3 52 24 PM" src="https://github.com/user-attachments/assets/23ea0e84-9c82-4998-8643-22733e81a839">
+
+<img width="328" alt="Screenshot 2024-07-28 at 3 54 02 PM" src="https://github.com/user-attachments/assets/c7ebb652-3186-4298-9f40-bf39d8fc02e1">
+
 
 ### Weekly workload projector
-Crafted from insights from historical work-time data, receive estimates on projected workload for the week
+Receive an estimated workload value for the current week, based on your scheduled events lying in the same week
+
+<img width="309" alt="Screenshot 2024-07-28 at 4 30 35 PM" src="https://github.com/user-attachments/assets/da35e249-6c01-4d91-9025-b2e666f0f499">
+
 
 ### Designer tools 
 Design and customize your timetable interface in whatever way you look with custom design elements 
+
+![Design](https://github.com/user-attachments/assets/50ea391a-9686-4860-bc4a-0bfaad0187af)
+
+![Calendar customization](https://github.com/user-attachments/assets/605671c5-2c78-4fc8-bb8f-dbf227fe3bed)
 
 
 
@@ -73,7 +83,7 @@ Design and customize your timetable interface in whatever way you look with cust
 4. Start the app
 
    ```bash
-    npx expo start
+    npm start
    ```
 **Note that you may have to close and re-open the project files on your code editor after installing the dependencies if you run into any errors**
 
