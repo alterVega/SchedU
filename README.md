@@ -21,7 +21,12 @@ Create Events from the Calendar page for any date, which then can be accessed th
 
 <img width="630" alt="Agenda" src="https://github.com/alterVega/SchedU/assets/164298842/427b31be-35be-4185-816b-385ad63919ff">
 
+### Modify and Delete Events from the Agenda Page
+
 <img width="626" alt="EventCreation" src="https://github.com/alterVega/SchedU/assets/164298842/9b2e7ac4-0463-4497-a561-b1e4b5423e07">
+
+![editEvent](https://github.com/user-attachments/assets/50dee290-e045-4871-9b1b-52c0b851a56f)
+
 
 
 ### Profile page
