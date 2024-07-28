@@ -80,7 +80,7 @@ Design and customize your timetable interface in whatever way you look with cust
 
 ## Alternatively, if you have the Expo Go app installed on your tablet/phone
 
-   <img width="226" alt="Screenshot 2024-07-25 at 2 25 25 PM" src="https://github.com/user-attachments/assets/3ce71954-24bb-47df-9dda-b709374c4c48">
+   <img width="208" alt="Screenshot 2024-07-28 at 3 44 06 PM" src="https://github.com/user-attachments/assets/13cd0ab2-ae6c-4464-aca1-b21a4298ed73">
 
 
 
