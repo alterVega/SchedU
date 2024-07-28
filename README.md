@@ -17,16 +17,16 @@ https://youtu.be/6agKeX77MMk
 ### Calendar and Agenda
 Create Events from the Calendar page for any date, which then can be accessed through weekly Agenda page
 
-<img width="329" alt="Schedule" src="https://github.com/alterVega/SchedU/assets/164298842/a1378298-32ab-4fba-8a89-12bc070c1b39">
+![calendarView](https://github.com/user-attachments/assets/71ded9df-f8f1-4294-b865-ba1b85acaf6d)
 
-<img width="630" alt="Agenda" src="https://github.com/alterVega/SchedU/assets/164298842/427b31be-35be-4185-816b-385ad63919ff">
+![createEvent](https://github.com/user-attachments/assets/0461ddd7-e0af-4a04-a891-c50f437478c7)
+
 
 ### Modify and Delete Events from the Agenda Page
 
-<img width="626" alt="EventCreation" src="https://github.com/alterVega/SchedU/assets/164298842/9b2e7ac4-0463-4497-a561-b1e4b5423e07">
+![agendaView](https://github.com/user-attachments/assets/695e0ad9-97ac-4cde-a8d8-45bd83d12357)
 
-![editEvent](https://github.com/user-attachments/assets/50dee290-e045-4871-9b1b-52c0b851a56f)
-
+![editEvent](https://github.com/user-attachments/assets/36260d0a-883a-4386-aa75-01a3ac16075d)
 
 
 ### Profile page
