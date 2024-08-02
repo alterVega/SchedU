@@ -97,11 +97,6 @@ Design and customize your timetable interface in whatever way you look with cust
 **Note that you may have to close and re-open the project files on your code editor after installing the dependencies if you run into any errors**
 
 
-## Alternatively, if you have the Expo Go app installed on your tablet/phone
-
-   <img width="208" alt="Screenshot 2024-07-28 at 3 44 06 PM" src="https://github.com/user-attachments/assets/13cd0ab2-ae6c-4464-aca1-b21a4298ed73">
-
-
 
 ## Tech stack 🧑‍💻
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
